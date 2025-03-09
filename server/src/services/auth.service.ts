@@ -34,7 +34,7 @@ export class AuthService {
     const user = await this.userRepository.create(userData);
 
     // Create wallet for the user
-    await this.walletRepository.create(user._id);
+    await this.walletRepository.create(user._id as string);
 
     // Generate JWT token
     const token = this.generateToken(user);
@@ -84,7 +84,7 @@ export class AuthService {
    */
   private generateToken(user: UserDocument): string {
     const payload: AuthPayload = {
-      userId: user._id,
+      userId: user._id as string,
       email: user.email,
     };
 

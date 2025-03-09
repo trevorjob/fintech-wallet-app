@@ -194,13 +194,13 @@ export class WalletService {
     }
 
     // Ensure sender is not recipient
-    if (senderId === recipient._id.toString()) {
+    if (senderId === (recipient._id as string).toString()) {
       throw new AppError("Cannot transfer to yourself", 400);
     }
 
     // Find recipient wallet
     const recipientWallet = await this.walletRepository.findByUserId(
-      recipient._id
+      recipient._id as string
     );
     if (!recipientWallet) {
       throw new AppError("Recipient wallet not found", 404);
@@ -227,7 +227,7 @@ export class WalletService {
     const recipientTransaction = await this.transactionRepository.create({
       referenceId: uuidv4(),
       walletId: recipientWallet.walletId,
-      userId: recipient._id,
+      userId: recipient._id as string,
       type: TransactionType.TRANSFER,
       amount,
       status: TransactionStatus.COMPLETED,
