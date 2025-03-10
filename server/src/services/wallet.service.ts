@@ -3,6 +3,7 @@ import { UserRepository } from "../repositories/user.repository";
 import { WalletRepository } from "../repositories/wallet.repository";
 import { TransactionRepository } from "../repositories/transaction.repository";
 import { PaymentService } from "./payment.service";
+import { EmailService, EmailOptions } from "./email.service";
 import { AppError } from "../utils/errors";
 import {
   TransactionDocument,
@@ -12,18 +13,21 @@ import {
 } from "../types";
 import { config } from "../config/config";
 import { v4 as uuidv4 } from "uuid";
-
+import { sendEmail } from "../utils/email";
+import { send } from "process";
 export class WalletService {
   private userRepository: UserRepository;
   private walletRepository: WalletRepository;
   private transactionRepository: TransactionRepository;
   private paymentService: PaymentService;
+  private emailService: EmailService;
 
   constructor() {
     this.userRepository = new UserRepository();
     this.walletRepository = new WalletRepository();
     this.transactionRepository = new TransactionRepository();
     this.paymentService = new PaymentService();
+    this.emailService = new EmailService();
   }
 
   /**
@@ -105,6 +109,7 @@ export class WalletService {
     reference: string
   ): Promise<{ transaction: TransactionDocument; wallet: WalletDocument }> {
     // Verify payment with payment gateway
+
     const verificationResponse =
       await this.paymentService.verifyPayment(reference);
     console.log(verificationResponse);
@@ -123,7 +128,10 @@ export class WalletService {
     if (!transaction) {
       throw new AppError("Transaction not found", 404);
     }
-
+    const user = await this.userRepository.findById(transaction.userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
     // If transaction is already completed, return it
     if (transaction.status === TransactionStatus.COMPLETED) {
       const wallet = await this.walletRepository.findByWalletId(
@@ -160,7 +168,44 @@ export class WalletService {
       throw new AppError("Failed to update wallet balance", 500);
     }
 
+    await sendEmail(
+      user.email,
+      "Successfully Funded Your FinWallet",
+      "You have Funded Your FinWallet",
+      this.successfullFundingTemplate(
+        user.firstName,
+        transaction.amount,
+        transaction.createdAt.toISOString(),
+        transaction.referenceId
+      ),
+      user._id as string
+    );
+
     return { transaction: updatedTransaction, wallet };
+  }
+  successfullFundingTemplate(
+    firstName: string,
+    amount: number,
+    transaction_date: string,
+    transaction_id: string
+  ): string {
+    return `
+    <p>Hi ${firstName},</p>
+    
+    <p>Your wallet has been successfully funded! 🎊<p>
+    
+    <p>Here are the details of your transaction:</p>
+    <p>- **Amount:** ${amount}</p>
+    <p>- **Date:** ${transaction_date}</p>
+    <p>- **Transaction ID:** ${transaction_id}</p>
+    
+    <p>You can now use your funds for seamless transactions. If you have any questions, feel free to reach out to our support team.</p>
+    
+    <p>Thanks for choosing FinWallet!</p>
+    
+    Best,  
+    FinWallet
+    `;
   }
 
   /**
