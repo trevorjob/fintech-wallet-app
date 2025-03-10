@@ -52,7 +52,7 @@ const TransactionItem = ({ transaction }: TransactionItemProps) => {
         return "Wallet funding";
       case "TRANSFER":
         // return `Transfer to ${transaction.metadata.recipient || "user"}`;
-        return `user`;
+        return `Transfer to user`;
       case "WITHDRAWAL":
         return "Withdrawal to bank";
       default:
