@@ -91,8 +91,8 @@ src/
 1. Clone the repository:
 
    ```bash
-   git clone <repository-url>
-   cd fintech-wallet/client
+   git clone [<repository-url>](https://github.com/trevorjob/fintech-wallet-app.git)
+   cd fintech-wallet-app/client
    ```
 
 2. Install dependencies:
