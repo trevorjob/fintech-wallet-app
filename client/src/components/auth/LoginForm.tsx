@@ -1,6 +1,5 @@
 // src/components/auth/LoginForm.jsx
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 // import { toast } from "../../components/ui/sonner";
 import { toast } from "sonner";
 
@@ -19,9 +18,8 @@ const LoginForm = () => {
 
   const { login } = useAuth();
   //   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
     setIsLoading(true);
@@ -34,9 +32,9 @@ const LoginForm = () => {
       window.location.href = "/";
     } catch (error) {
       console.error("Login error:", error);
-      setFormError(error.message || "Invalid email or password");
+      setFormError((error as Error).message || "Invalid email or password");
       toast.error("Login failed", {
-        description: error.message || "Invalid email or password",
+        description: (error as Error).message || "Invalid email or password",
       });
     } finally {
       setIsLoading(false);

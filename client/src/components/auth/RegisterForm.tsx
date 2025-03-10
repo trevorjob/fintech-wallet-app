@@ -1,6 +1,5 @@
 // src/components/auth/RegisterForm.jsx
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 // import { toast } from "../../components/ui/sonner";
 import { toast } from "sonner";
 
@@ -21,17 +20,16 @@ const RegisterForm = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState("");
-
+  
   const { register } = useAuth();
   //   const { toast } = useToast();
-  const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
 
@@ -58,9 +56,12 @@ const RegisterForm = () => {
       window.location.href = "/";
     } catch (error) {
       console.error("Registration error:", error);
-      setFormError(error.message || "Registration failed. Please try again.");
+      setFormError(
+        (error as Error).message || "Registration failed. Please try again."
+      );
       toast.error("Registration failed", {
-        description: error.message || "Registration failed. Please try again.",
+        description:
+          (error as Error).message || "Registration failed. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -143,7 +144,12 @@ const RegisterForm = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full" disabled={isLoading} variant={"outline"}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+            variant={"outline"}
+          >
             {isLoading ? "Creating account..." : "Create account"}
           </Button>
         </form>

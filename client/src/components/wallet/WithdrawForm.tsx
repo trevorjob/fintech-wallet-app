@@ -20,14 +20,21 @@ import { walletService } from "../../services/walletService";
 
 const WithdrawForm = () => {
   const [formData, setFormData] = useState({
-    bankCode: "",
     accountNumber: "",
     accountName: "",
     amount: "",
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  const [bankList, setBankList] = useState([]);
+  interface Bank {
+    bank_name: string;
+    code: string;
+  }
+  const [bankList, setBankList] = useState([] as Bank[]);
+  const [selectedBankComp, setSelectedBankComp] = useState<Bank>({
+    bank_name: "",
+    code: "",
+  });
   const [selectedBank, setSelectedBank] = useState("");
   //   const { toast } = useToast();
   const navigate = useNavigate();
@@ -38,30 +45,34 @@ const WithdrawForm = () => {
         setBankList(response.data);
       })
       .catch((error) => {
+        console.error("Failed to fetch banks:", error);
         toast.error("Failed to fetch");
       });
   }, []);
-  const handleChange = (e) => {
+
+  const selectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    if (name === "bankCode") {
-      console.log({ name, value });
-      const bankCode = bankList.find((bank) => bank.bank_name === value);
-      setSelectedBank(bankCode.bank_name);
-      if (bankCode) {
-        console.log(bankCode);
-        // console.log(bankCode);
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: value,
-          bankCode: bankCode.code,
-        }));
-        console.log(formData);
-      }
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
+    console.log({ name, value });
+    const bC = bankList.find((bank: Bank) => bank.bank_name === value);
+    if (bC) {
+      setSelectedBank(bC.bank_name);
+    }
+    if (bC) {
+      // console.log(bankCode);
+      setSelectedBankComp(bC);
     }
   };
-  const handleSubmit = async (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    // console.log(bankCode);
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+    console.log(formData);
+  };
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -76,7 +87,7 @@ const WithdrawForm = () => {
 
     try {
       await walletService.withdrawFunds({
-        bankCode: formData.bankCode,
+        bankCode: selectedBankComp.code,
         bankAccount: formData.accountNumber,
         accountName: formData.accountName,
         amount: numAmount,
@@ -90,9 +101,12 @@ const WithdrawForm = () => {
       navigate("/");
     } catch (error) {
       console.error("Withdrawal error:", error);
-      setError(error.message || "Withdrawal failed. Please try again.");
+      setError(
+        (error as Error).message || "Withdrawal failed. Please try again."
+      );
       toast.error("Withdrawal failed", {
-        description: error.message || "Withdrawal failed. Please try again.",
+        description:
+          (error as Error).message || "Withdrawal failed. Please try again.",
       });
     } finally {
       setIsLoading(false);
@@ -100,10 +114,10 @@ const WithdrawForm = () => {
   };
 
   useEffect(() => {
-    if (formData.bankCode && formData.accountNumber) {
+    if (selectedBankComp.code && formData.accountNumber) {
       axios
         .get(
-          `https://app.nuban.com.ng/api/NUBAN-VPWTUJWJ1943?bank_code=${formData.bankCode}&acc_no=${formData.accountNumber}`
+          `https://app.nuban.com.ng/api/NUBAN-VPWTUJWJ1943?bank_code=${selectedBankComp.code}&acc_no=${formData.accountNumber}`
         )
         .then((response) => {
           const { account_name } = response.data[0];
@@ -115,10 +129,10 @@ const WithdrawForm = () => {
           console.log(account_name);
         })
         .catch((error) => {
-          toast.error(error.message || "Error getting account");
+          toast.error((error as Error).message || "Error getting account");
         });
     }
-  }, [formData.accountNumber, formData.bankCode]);
+  }, [formData.accountNumber, selectedBankComp.code]);
   return (
     <Card>
       <CardHeader>
@@ -146,12 +160,12 @@ const WithdrawForm = () => {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="bankCode">Bank Name</Label>
+            <Label htmlFor="bank">Bank Name</Label>
             <select
-              id="bankCode"
-              name="bankCode"
-              value={formData.bankCode}
-              onChange={handleChange}
+              id="bank"
+              name="bank"
+              value={selectedBankComp.code}
+              onChange={selectChange}
             >
               <option>{selectedBank || "Select Bank"}</option>
               {bankList.map((bank, index) => (

@@ -8,22 +8,22 @@ export const walletService = {
   },
 
   // Initiate wallet funding
-  initiateFunding: async (data) => {
+  initiateFunding: async (data: object) => {
     return api.post("/wallet/fund", data);
   },
 
   // Complete wallet funding (after payment gateway callback)
-  completeFunding: async (reference) => {
+  completeFunding: async (reference: string) => {
     return api.get(`/wallet/fund/verify/${reference}`);
   },
 
   // Transfer funds to another wallet
-  transferFunds: async (data) => {
+  transferFunds: async (data: object) => {
     return api.post("/wallet/transfer", data);
   },
 
   // Withdraw funds
-  withdrawFunds: async (data) => {
+  withdrawFunds: async (data: object) => {
     return api.post("/wallet/withdraw", data);
   },
 

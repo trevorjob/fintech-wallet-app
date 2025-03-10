@@ -3,12 +3,12 @@ import api from "./api";
 
 export const authService = {
   // Register new user
-  register: async (userData) => {
+  register: async (userData: object) => {
     return api.post("/auth/register", userData);
   },
 
   // Login user
-  login: async (credentials) => {
+  login: async (credentials: object) => {
     return api.post("/auth/login", credentials);
   },
 

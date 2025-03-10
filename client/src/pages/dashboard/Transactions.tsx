@@ -1,5 +1,5 @@
 // src/pages/dashboard/Transactions.jsx
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/layout/Navbar";
 import Sidebar from "../../components/layout/Sidebar";
 import TransactionHistory from "../../components/wallet/TransactionHistory";

@@ -1,11 +1,9 @@
 // src/pages/dashboard/Fund.jsx
-import React from "react";
 import Navbar from "../../components/layout/Navbar";
 import Sidebar from "../../components/layout/Sidebar";
 import FundWalletForm from "../../components/wallet/FundWalletForm";
 import WalletCard from "../../components/wallet/WalletCard";
 import { useWallet } from "../../hooks/useWallet";
-import { walletService } from "../../services/walletService";
 const Fund = () => {
   const { balance, isLoading, walletId } = useWallet();
 

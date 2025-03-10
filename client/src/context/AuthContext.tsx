@@ -1,10 +1,20 @@
 // src/context/AuthContext.jsx
-import React, { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect } from "react";
 import { authService } from "../services/authService";
 
-export const AuthContext = createContext();
+interface AuthContextType {
+  login: (credentials: object) => Promise<void>;
+  register: (userData: object) => Promise<void>;
+  user: object | null;
 
-export const AuthProvider = ({ children }) => {
+  logout: () => void;
+  loading: boolean;
+  error: string;
+}
+
+export const AuthContext = createContext<AuthContextType | null>(null);
+
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -17,7 +27,7 @@ export const AuthProvider = ({ children }) => {
           // Get user profile from token
           const userData = await authService.getProfile();
           console.log(userData);
-          setUser(userData);
+          setUser(userData.data.user);
         } catch (err) {
           console.error("Auth error:", err);
           localStorage.removeItem("token");
@@ -33,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (credentials) => {
+  const login = async (credentials: object) => {
     console.log(credentials);
 
     setLoading(true);
@@ -42,24 +52,32 @@ export const AuthProvider = ({ children }) => {
       console.log(data.data);
       localStorage.setItem("token", data.data.token);
       setUser(data.data.user);
-      return data;
+      // return data;
     } catch (err) {
-      setError(err.message || "Login failed");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Login failed");
+      }
       throw err;
     } finally {
       setLoading(false);
     }
   };
 
-  const register = async (userData) => {
+  const register = async (userData: object) => {
     setLoading(true);
     try {
       const data = await authService.register(userData);
       localStorage.setItem("token", data.data.token);
       setUser(data.data.user);
-      return data;
+      // return data;
     } catch (err) {
-      setError(err.message || "Registration failed");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Registration failed");
+      }
       throw err;
     } finally {
       setLoading(false);

@@ -1,5 +1,4 @@
 // src/pages/auth/Register.jsx
-import React from "react";
 import { Link } from "react-router-dom";
 import RegisterForm from "../../components/auth/RegisterForm";
 import AuthLayout from "../../components/layout/AuthLayout";

@@ -22,7 +22,7 @@ const FundWalletForm = () => {
   //   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -53,11 +53,13 @@ const FundWalletForm = () => {
     } catch (error) {
       console.error("Funding error:", error);
       setError(
-        error.message || "Failed to initiate funding. Please try again."
+        (error as Error).message ||
+          "Failed to initiate funding. Please try again."
       );
       toast.error("Funding failed", {
         description:
-          error.message || "Failed to initiate funding. Please try again.",
+          (error as Error).message ||
+          "Failed to initiate funding. Please try again.",
       });
     } finally {
       setIsLoading(false);

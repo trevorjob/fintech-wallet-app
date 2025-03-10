@@ -28,12 +28,12 @@ const TransferForm = () => {
   //   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -61,9 +61,12 @@ const TransferForm = () => {
       navigate("/");
     } catch (error) {
       console.error("Transfer error:", error);
-      setError(error.message || "Transfer failed. Please try again.");
+      setError(
+        (error as Error).message || "Transfer failed. Please try again."
+      );
       toast.error("Transfer failed", {
-        description: error.message || "Transfer failed. Please try again.",
+        description:
+          (error as Error).message || "Transfer failed. Please try again.",
       });
     } finally {
       setIsLoading(false);

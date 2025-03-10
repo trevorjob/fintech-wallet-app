@@ -1,17 +1,25 @@
 // src/contexts/WalletContext.jsx
-import React, { createContext, useState, useEffect, useContext } from "react";
+import { createContext, useState, useEffect } from "react";
 import { walletService } from "../services/walletService";
 import { useAuth } from "../hooks/useAuth";
 
 // Create a context
-export const WalletContext = createContext();
+interface WalletContextType {
+  balance: number;
+  isLoading: boolean;
+  walletId: string;
+  transactions: object[]; // Define proper transaction type
+  refreshWallet: () => Promise<void>;
+  // Add other properties
+}
 
-export const WalletProvider = ({ children }) => {
+export const WalletContext = createContext<WalletContextType | null>(null);
+export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const [balance, setBalance] = useState(0);
   const [walletId, setWalletId] = useState("");
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
   const { user } = useAuth();
   console.log(user);
@@ -43,19 +51,19 @@ export const WalletProvider = ({ children }) => {
         page: 1,
         limit: 10,
       });
-      setTransactions(transactionsResponse.transactions);
+      setTransactions(transactionsResponse.data.transactions);
 
-      setError(null);
+      setError("");
     } catch (err) {
       console.error("Error fetching wallet data:", err);
-      setError(err.message || "Failed to load wallet data");
+      setError((err as Error).message || "Failed to load wallet data");
     } finally {
       setIsLoading(false);
     }
   };
 
   // Function to initiate wallet funding
-  const initiateFunding = async (amount) => {
+  const initiateFunding = async (amount: number) => {
     setIsLoading(true);
     try {
       const response = await walletService.initiateFunding({ amount });
@@ -63,7 +71,7 @@ export const WalletProvider = ({ children }) => {
       return response;
     } catch (err) {
       console.error("Funding error:", err);
-      setError(err.message || "Failed to initiate funding");
+      setError((err as Error).message || "Failed to initiate funding");
       throw err;
     } finally {
       setIsLoading(false);
@@ -71,15 +79,18 @@ export const WalletProvider = ({ children }) => {
   };
 
   // Function to withdraw funds
-  const withdrawFunds = async (withdrawalData) => {
+  const withdrawFunds = async (withdrawalData: object) => {
     setIsLoading(true);
     try {
       const response = await walletService.withdrawFunds(withdrawalData);
       await fetchWalletData(); // Refresh wallet data
       return response;
     } catch (err) {
-      console.error("Withdrawal error:", err);
-      setError(err.message || "Failed to withdraw funds");
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to withdraw funds");
+      }
       throw err;
     } finally {
       setIsLoading(false);
@@ -88,7 +99,7 @@ export const WalletProvider = ({ children }) => {
 
   // Function to refresh wallet data manually
   const refreshWallet = async () => {
-    return fetchWalletData();
+    fetchWalletData();
   };
 
   const value = {

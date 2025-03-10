@@ -1,5 +1,4 @@
 // src/pages/auth/Login.jsx
-import React from "react";
 import { Link } from "react-router-dom";
 import LoginForm from "../../components/auth/LoginForm";
 import AuthLayout from "../../components/layout/AuthLayout";

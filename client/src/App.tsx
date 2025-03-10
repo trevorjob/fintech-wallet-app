@@ -1,5 +1,4 @@
 // src/App.jsx
-import React from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -20,9 +19,13 @@ import Transfer from "./pages/dashboard/Transfer";
 import Withdraw from "./pages/dashboard/Withdraw";
 import Transactions from "./pages/dashboard/Transactions";
 import NotFound from "./pages/NotFound";
+import { ReactNode } from "react";
 
+interface PrivateRouteProps {
+  children: ReactNode;
+}
 // Auth Guard Component
-const PrivateRoute = ({ children }) => {
+const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const token = localStorage.getItem("token");
   return token ? children : <Navigate to="/login" />;
 };

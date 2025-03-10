@@ -1,5 +1,5 @@
 // src/pages/dashboard/Dashboard.jsx
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "../../components/layout/Navbar";
 import Sidebar from "../../components/layout/Sidebar";
 import WalletCard from "../../components/wallet/WalletCard";
@@ -36,9 +36,9 @@ const Dashboard = () => {
         setBalance(response.data.wallet.balance);
         setWalletId(response.data.wallet.walletId);
         refreshWallet();
-        if (response.success) {
+        if (response.data.success) {
           toast.success("Payment successful", {
-            description: `You have successfully funded your wallet with ₦${response.amount}`,
+            description: `You have successfully funded your wallet with ₦${response.data.amount}`,
           });
         } else {
           toast.error("Payment failed", {

@@ -5,7 +5,13 @@ import { Skeleton } from "../../components/ui/skeleton";
 import { Wallet, Eye, EyeOff } from "lucide-react";
 import { formatNumberToCurrency } from "../../utils/formatters";
 
-const WalletCard = ({ balance, isLoading, walletId }) => {
+interface WalletCardProps {
+  balance: number;
+  isLoading: boolean;
+  walletId: string;
+}
+
+const WalletCard = ({ balance, isLoading, walletId }: WalletCardProps) => {
   const [showBalance, setShowBalance] = React.useState(true);
 
   const toggleBalance = () => {

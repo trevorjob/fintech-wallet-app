@@ -1,5 +1,4 @@
 // src/components/layout/Navbar.jsx
-import React from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/ui/button";
@@ -11,10 +10,24 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
-import { Bell, User } from "lucide-react";
+import { User } from "lucide-react";
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  interface UserData {
+    data: {
+      user: {
+        firstName: string;
+        lastName: string;
+      };
+    };
+  }
+  const userName =
+    user && (user as UserData).data
+      ? `${(user as UserData).data.user.firstName} ${
+          (user as UserData).data.user.lastName
+        }`
+      : "My Account";
   return (
     <header className="border-b bg-white">
       <div className="flex h-16 items-center px-4 md:px-6">
@@ -37,11 +50,7 @@ const Navbar = () => {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>
-                {user
-                  ? `${user.data.user.firstName} ${user.data.user.lastName}`
-                  : "My Account"}
-              </DropdownMenuLabel>
+              <DropdownMenuLabel>{userName}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               {/* <DropdownMenuItem>Profile</DropdownMenuItem> */}
               {/* <DropdownMenuItem>Settings</DropdownMenuItem> */}

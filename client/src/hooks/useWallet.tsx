@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { WalletContext } from "../context/WalletContext";
-import { api } from "../services/api";
 export const useWallet = () => {
   const context = useContext(WalletContext);
   if (!context) {

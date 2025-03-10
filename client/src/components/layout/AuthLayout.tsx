@@ -1,7 +1,6 @@
 // src/components/layout/AuthLayout.jsx
-import React from "react";
-
-const AuthLayout = ({ children }) => {
+import { ReactNode } from "react";
+const AuthLayout = ({ children }: { children: ReactNode }) => {
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
       {/* Left side - Brand & illustration */}

@@ -1,14 +1,6 @@
 // src/components/layout/Sidebar.jsx
-import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Home,
-  PlusCircle,
-  Send,
-  CreditCard,
-  History,
-  Settings,
-} from "lucide-react";
+import { Home, PlusCircle, Send, CreditCard, History } from "lucide-react";
 
 const Sidebar = () => {
   const location = useLocation();

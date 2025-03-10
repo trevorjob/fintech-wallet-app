@@ -1,5 +1,4 @@
 // src/components/wallet/TransactionHistory.jsx
-import React from "react";
 import {
   ArrowUpRight,
   ArrowDownLeft,
@@ -16,9 +15,12 @@ import {
   TableHeader,
   TableRow,
 } from "../../components/ui/table";
-
-const TransactionItem = ({ transaction }) => {
-  const getTransactionIcon = (type) => {
+import { Transaction } from "../../types/transactions";
+interface TransactionItemProps {
+  transaction: Transaction;
+}
+const TransactionItem = ({ transaction }: TransactionItemProps) => {
+  const getTransactionIcon = (type: string) => {
     switch (type) {
       case "FUNDING":
         return <ArrowDownLeft className="h-4 w-4 text-emerald-500" />;
@@ -31,7 +33,7 @@ const TransactionItem = ({ transaction }) => {
     }
   };
 
-  const getTransactionColor = (type) => {
+  const getTransactionColor = (type: string) => {
     switch (type) {
       case "FUNDING":
         return "text-emerald-600";
@@ -44,16 +46,17 @@ const TransactionItem = ({ transaction }) => {
     }
   };
 
-  const getTransactionDescription = (transaction) => {
+  const getTransactionDescription = (transaction: Transaction) => {
     switch (transaction.type) {
       case "FUNDING":
         return "Wallet funding";
       case "TRANSFER":
-        return `Transfer to ${transaction.recipient || "user"}`;
+        // return `Transfer to ${transaction.metadata.recipient || "user"}`;
+        return `user`;
       case "WITHDRAWAL":
         return "Withdrawal to bank";
       default:
-        return transaction.description || "Transaction";
+        return "Transaction";
     }
   };
 
@@ -130,8 +133,17 @@ const EmptyState = () => (
     </TableCell>
   </TableRow>
 );
+interface TransactionHistoryProps {
+  transactions: Transaction[];
+  isLoading: boolean;
+  limit?: number;
+}
 
-const TransactionHistory = ({ transactions, isLoading, limit = 5 }) => {
+const TransactionHistory = ({
+  transactions,
+  isLoading,
+  limit = 5,
+}: TransactionHistoryProps) => {
   console.log(transactions);
   return (
     <Table>
@@ -145,11 +157,11 @@ const TransactionHistory = ({ transactions, isLoading, limit = 5 }) => {
       <TableBody>
         {isLoading ? (
           Array(limit)
-            .fill()
+            .fill(null)
             .map((_, index) => <TransactionSkeleton key={index} />)
         ) : transactions && transactions.length > 0 ? (
           transactions.map((transaction) => (
-            <TransactionItem key={transaction.id} transaction={transaction} />
+            <TransactionItem key={transaction._id} transaction={transaction} />
           ))
         ) : (
           <EmptyState />
