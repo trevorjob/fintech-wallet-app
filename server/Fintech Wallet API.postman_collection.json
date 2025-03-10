@@ -1,0 +1,330 @@
+{
+	"info": {
+		"_postman_id": "f92d61ff-6edc-4b1f-924c-ebcfeb71d417",
+		"name": "Fintech Wallet API",
+		"description": "A collection of API endpoints for the Fintech Wallet application, including authentication, wallet funding, transfers, withdrawals, and balance inquiries.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29635312"
+	},
+	"item": [
+		{
+			"name": "get balance",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2NjYzVkNWI4NTY1YjUxYWM5ODcwYTUiLCJlbWFpbCI6InJlZGVrczEyMzQ1NkBnbWFpbC5jb20iLCJpYXQiOjE3NDE0NzY1MDcsImV4cCI6MTc0MjA4MTMwN30.i3G36sgCrx_196gjR3Ce2okJsrXJFAtafa8x7d-vByU",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/wallet/balance",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"wallet",
+						"balance"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "fund account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2NjYzVkNWI4NTY1YjUxYWM5ODcwYTUiLCJlbWFpbCI6InJlZGVrczEyMzQ1NkBnbWFpbC5jb20iLCJpYXQiOjE3NDE0NzY1MDcsImV4cCI6MTc0MjA4MTMwN30.i3G36sgCrx_196gjR3Ce2okJsrXJFAtafa8x7d-vByU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"amount\": 10000, \"paymentMethod\": \"paystack\"}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/wallet/fund",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"wallet",
+						"fund"
+					]
+				},
+				"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"Redeks123456@gmail.com\",\n\t\"password\": \"Blessedacademy\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/login",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Successful POST request\", function () {",
+							"    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+							"});",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"Job\",\n\t\"lastName\": \"Kumdan\",\n\t\"email\": \"Redeks123456@gmail.com\",\n\t\"password\": \"Blessedacademy\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/auth/register",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"auth",
+						"register"
+					]
+				},
+				"description": "This is a POST request, submitting data to an API via the request body. This request submits JSON data, and the data is reflected in the response.\n\nA successful POST request typically returns a `200 OK` or `201 Created` response code."
+			},
+			"response": []
+		},
+		{
+			"name": "confirm funding",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2NjYzVkNWI4NTY1YjUxYWM5ODcwYTUiLCJlbWFpbCI6InJlZGVrczEyMzQ1NkBnbWFpbC5jb20iLCJpYXQiOjE3NDE0NzY1MDcsImV4cCI6MTc0MjA4MTMwN30.i3G36sgCrx_196gjR3Ce2okJsrXJFAtafa8x7d-vByU",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/wallet/fund/verify/1f0082a6-7f17-4f04-bad2-83a8484ed108",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"wallet",
+						"fund",
+						"verify",
+						"1f0082a6-7f17-4f04-bad2-83a8484ed108"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get transactions",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2NjYzVkNWI4NTY1YjUxYWM5ODcwYTUiLCJlbWFpbCI6InJlZGVrczEyMzQ1NkBnbWFpbC5jb20iLCJpYXQiOjE3NDE0NzY1MDcsImV4cCI6MTc0MjA4MTMwN30.i3G36sgCrx_196gjR3Ce2okJsrXJFAtafa8x7d-vByU",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{base_url}}/wallet/transactions",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"wallet",
+						"transactions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "withdraw",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2NjYzVkNWI4NTY1YjUxYWM5ODcwYTUiLCJlbWFpbCI6InJlZGVrczEyMzQ1NkBnbWFpbC5jb20iLCJpYXQiOjE3NDE0NzY1MDcsImV4cCI6MTc0MjA4MTMwN30.i3G36sgCrx_196gjR3Ce2okJsrXJFAtafa8x7d-vByU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"amount\": 1000,\r\n    \"bankCode\": \"801\",\r\n    \"bankAccount\": \"8104899622\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/wallet/withdraw",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"wallet",
+						"withdraw"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "transfer",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2N2NjYzVkNWI4NTY1YjUxYWM5ODcwYTUiLCJlbWFpbCI6InJlZGVrczEyMzQ1NkBnbWFpbC5jb20iLCJpYXQiOjE3NDE0NzY1MDcsImV4cCI6MTc0MjA4MTMwN30.i3G36sgCrx_196gjR3Ce2okJsrXJFAtafa8x7d-vByU",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"amount\": 1000,\r\n    \"bankCode\": \"801\",\r\n    \"bankAccount\": \"8104899622\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/wallet/withdraw",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"wallet",
+						"withdraw"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": "1"
+		},
+		{
+			"key": "base_url",
+			"value": "https://postman-rest-api-learner.glitch.me/"
+		}
+	]
+}
