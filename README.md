@@ -1,16 +1,34 @@
 # Fintech Wallet API
 
-A RESTful API for a fintech wallet application built with Node.js, Express, TypeScript, and MongoDB.
+A complete fintech solution featuring a Node.js/Express/TypeScript backend and React/TypeScript frontend that allows users to register, fund their wallet, transfer between wallets, and withdraw funds.
+
+## Live Demo
+
+- **Frontend**: [Fintech Wallet App](https://fintech-wallet-app.vercel.app)
+- **Backend API**: [Fintech Wallet API](https://fintech-wallet-api.onrender.com)
+
+> **Note**: The backend is deployed on Render using their free tier, which may cause the initial request to take 30-60 seconds as the server "wakes up" from inactive state. Subsequent requests will be much faster.
 
 ## Features
 
-- 🔐 User registration and authentication (JWT)
-- 💰 Wallet creation and management
-- 💸 Fund wallet through payment gateway
-- 🔄 Transfer funds between wallets
-- 📤 Withdraw funds to bank accounts
-- 📊 View wallet balance and transaction history
-- 🔒 Security with rate limiting and proper validation
+- 🔐 **Authentication & Authorization**
+  - Secure user registration and login with JWT
+  - Password encryption using bcrypt
+- 💰 **Wallet Management**
+  - Fund wallet through Paystack payment gateway
+  - Transfer funds between registered users by email
+  - Withdraw funds with appropriate fee handling
+  - View wallet balance and transaction history
+- 📲 **Notifications**
+  - Email notifications for successful wallet funding
+  - Transaction confirmation messages
+- 🛡️ **Security**
+  - Rate limiting for wallet funding (max 10 requests per 15 minutes)
+  - JWT token-based authentication
+  - Input validation and sanitization
+- 📱 **Responsive Frontend**
+  - Modern UI built with React, TypeScript and shadcn
+  - Seamless integration with the backend API
 
 ## Tech Stack
 
@@ -81,7 +99,7 @@ The project follows a clean architecture pattern with the following structure:
 
    ```bash
    git clone <repository-url>
-   cd fintech-wallet-api
+   cd fintech-wallet-api/server
    ```
 
 2. Install dependencies:
@@ -100,12 +118,25 @@ The project follows a clean architecture pattern with the following structure:
    PAYSTACK_SECRET=paystack_secret
    NODE_ENV=development
    FRONTEND_URL=http://localhost:5173
+   EMAIL_SERVICE=mailersend  # or any other service: 'outlook', 'yahoo', etc.
+   EMAIL_USER=user
+   EMAIL_PASSWORD=pass
+   EMAIL_FROM=user
    ```
 
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
+EMAIL_HOST=host
+EMAIL_PORT=587
+EMAIL_SECURE=true
+MAILERSEND_API_KEY=key
+APP_URL=http://localhost:3000
+PORT=3000
+
+````
+
+1. Start the development server:
+```bash
+npm run dev
+````
 
 ### Using Docker
 
@@ -121,9 +152,9 @@ The project follows a clean architecture pattern with the following structure:
 
 Run the test suite:
 
-```bash
-npm test
-```
+- Backend tests are written using Jest
+- Test coverage: <50%
+- Run tests with `npm test`
 
 For test coverage report:
 
@@ -137,6 +168,15 @@ A Postman collection is included in the repository for API documentation.
 
 Import the collection into Postman from the `server/fintech-wallet-api.postman_collection.json` file.
 
-## License
+## Additional Notes
 
-[MIT](LICENSE)
+- The frontend was built with a focus on functionality and user experience, given the time constraints
+- Implemented both bonus features: email notifications and rate limiting
+- Followed SOLID principles and clean architecture throughout the codebase
+
+## Future Improvements
+
+- Add more comprehensive error handling and recovery
+- Implement two-factor authentication
+- Add more payment gateway options
+- Enhance the transaction history with detailed filtering options
