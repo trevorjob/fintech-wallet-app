@@ -135,8 +135,8 @@ npm test -- --coverage
 
 A Postman collection is included in the repository for API documentation.
 
-Import the collection into Postman from the `docs/fintech-wallet-api.postman_collection.json` file.
+Import the collection into Postman from the `server/fintech-wallet-api.postman_collection.json` file.
 
-<!-- ## License
+## License
 
-[MIT](LICENSE) -->
+[MIT](LICENSE)
