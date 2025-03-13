@@ -1,10 +1,9 @@
 // src/components/wallet/WithdrawForm.jsx
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // import { useToast } from "../../components/ui/use-toast";
 import { toast } from "sonner";
-
+import { Bank } from "../../types/banks";
 import {
   Card,
   CardContent,
@@ -17,7 +16,7 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { AlertCircle, Info } from "lucide-react";
 import { walletService } from "../../services/walletService";
-
+import { getAllBanks, getBankAccountInfo } from "../../utils/api_helpers";
 const WithdrawForm = () => {
   const [formData, setFormData] = useState({
     accountNumber: "",
@@ -26,10 +25,7 @@ const WithdrawForm = () => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
-  interface Bank {
-    bank_name: string;
-    code: string;
-  }
+
   const [bankList, setBankList] = useState([] as Bank[]);
   const [selectedBankComp, setSelectedBankComp] = useState<Bank>({
     bank_name: "",
@@ -39,8 +35,7 @@ const WithdrawForm = () => {
   //   const { toast } = useToast();
   const navigate = useNavigate();
   useEffect(() => {
-    axios
-      .get("https://app.nuban.com.ng/bank_codes.json")
+    getAllBanks()
       .then((response) => {
         setBankList(response.data);
       })
@@ -87,7 +82,7 @@ const WithdrawForm = () => {
 
     try {
       await walletService.withdrawFunds({
-        bankCode: selectedBankComp.code,
+        bankCode: selectedBankComp.bank_name,
         bankAccount: formData.accountNumber,
         accountName: formData.accountName,
         amount: numAmount,
@@ -114,11 +109,8 @@ const WithdrawForm = () => {
   };
 
   useEffect(() => {
-    if (selectedBankComp.code && formData.accountNumber) {
-      axios
-        .get(
-          `https://app.nuban.com.ng/api/NUBAN-VPWTUJWJ1943?bank_code=${selectedBankComp.code}&acc_no=${formData.accountNumber}`
-        )
+    if (selectedBankComp.code && formData.accountNumber.length === 10) {
+      getBankAccountInfo(selectedBankComp.code, formData.accountNumber)
         .then((response) => {
           const { account_name } = response.data[0];
           //   setAccount(response.data[0]);
@@ -164,7 +156,7 @@ const WithdrawForm = () => {
             <select
               id="bank"
               name="bank"
-              value={selectedBankComp.code}
+              value={selectedBankComp.bank_name}
               onChange={selectChange}
             >
               <option>{selectedBank || "Select Bank"}</option>
@@ -184,6 +176,8 @@ const WithdrawForm = () => {
               value={formData.accountNumber}
               onChange={handleChange}
               required
+              minLength={10}
+              maxLength={10}
             />
           </div>
           <div className="space-y-2">

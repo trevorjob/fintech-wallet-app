@@ -15,22 +15,38 @@ import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
 import { AlertCircle } from "lucide-react";
 import { walletService } from "../../services/walletService";
-
+import { useWallet } from "../../hooks/useWallet";
+import { authService } from "../../services/authService";
 const TransferForm = () => {
+  interface User {
+    firstName: string;
+    lastName: string;
+    walletId: string;
+    email: string;
+  }
   const [formData, setFormData] = useState({
-    recipientEmail: "",
     amount: "",
     description: "",
+    walletId: "",
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState({} as User);
   const [error, setError] = useState("");
-
+  const { balance } = useWallet();
   //   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    console.log({ name, value });
+    if (name == "walletId" && value.length == 10) {
+      authService.getUser(value).then((res) => {
+        console.log(res);
+        setUser(res.data);
+        // setFormData((prev) => ({ ...prev, accountName: res.data.accountName }));
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -43,19 +59,23 @@ const TransferForm = () => {
       setError("Please enter a valid amount");
       return;
     }
+    if (numAmount > balance) {
+      setError("Insufficient funds");
+      return;
+    }
 
     setIsLoading(true);
 
     try {
       await walletService.transferFunds({
-        recipientEmail: formData.recipientEmail,
+        walletId: formData.walletId,
         amount: numAmount,
         description: formData.description,
       });
 
       toast.success("Transfer successful", {
         description: `₦${numAmount.toFixed(2)} has been sent to ${
-          formData.recipientEmail
+          formData.walletId
         }`,
       });
       navigate("/");
@@ -86,8 +106,20 @@ const TransferForm = () => {
               {error}
             </div>
           )}
-
           <div className="space-y-2">
+            <Label htmlFor="walletId">Wallet ID</Label>
+            <Input
+              id="walletId"
+              name="walletId"
+              type="text"
+              placeholder="wallet Id"
+              value={formData.walletId}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* <div className="space-y-2">
             <Label htmlFor="recipientEmail">Recipient Email</Label>
             <Input
               id="recipientEmail"
@@ -98,8 +130,23 @@ const TransferForm = () => {
               onChange={handleChange}
               required
             />
+          </div> */}
+          <div className="space-y-2">
+            <Label htmlFor="accountName">Account Name</Label>
+            <Input
+              id="accountName"
+              name="accountName"
+              placeholder="Enter your account name"
+              value={
+                formData.walletId.length == 10 && user
+                  ? user.firstName + " " + user.lastName
+                  : ""
+              }
+              onChange={handleChange}
+              //   required
+              readOnly
+            />
           </div>
-
           <div className="space-y-2">
             <Label htmlFor="amount">Amount (NGN)</Label>
             <Input

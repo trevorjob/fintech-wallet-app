@@ -15,18 +15,13 @@ import { User } from "lucide-react";
 const Navbar = () => {
   const { user, logout } = useAuth();
   interface UserData {
-    data: {
-      user: {
-        firstName: string;
-        lastName: string;
-      };
-    };
+    firstName: string;
+    lastName: string;
   }
+  console.log(user);
   const userName =
-    user && (user as UserData).data
-      ? `${(user as UserData).data.user.firstName} ${
-          (user as UserData).data.user.lastName
-        }`
+    user && (user as UserData)
+      ? `${(user as UserData).firstName} ${(user as UserData).lastName}`
       : "My Account";
   return (
     <header className="border-b bg-white">

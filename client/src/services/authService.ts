@@ -11,9 +11,18 @@ export const authService = {
   login: async (credentials: object) => {
     return api.post("/auth/login", credentials);
   },
+  forgotPassword: async (credentials: object) => {
+    return api.post("/auth/forgot-password", credentials);
+  },
+  resetPassword: async (credentials: object) => {
+    return api.post("/auth/reset-password", credentials);
+  },
 
   // Get user profile
   getProfile: async () => {
     return api.get("/auth/profile");
+  },
+  getUser: async (walletId: string) => {
+    return api.get(`/auth/user/${walletId}`);
   },
 };

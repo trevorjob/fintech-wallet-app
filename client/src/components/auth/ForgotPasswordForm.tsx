@@ -1,22 +1,20 @@
-// src/components/auth/LoginForm.jsx
+// src/components/auth/ForgotPassword.jsx
 import { useState } from "react";
 // import { toast } from "../../components/ui/sonner";
 import { toast } from "sonner";
 
-import { Button } from "../../components/ui/button";
-import { Input } from "../../components/ui/input";
-import { Label } from "../../components/ui/label";
-import { Card, CardContent } from "../../components/ui/card";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Card, CardContent } from "../ui/card";
 import { AlertCircle } from "lucide-react";
-import { useAuth } from "../../hooks/useAuth";
-
-const LoginForm = () => {
+// import { useAuth } from "../../hooks/useAuth";
+import { authService } from "../../services/authService";
+const ForgotPasswordForm = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState("");
 
-  const { login } = useAuth();
   //   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -24,12 +22,11 @@ const LoginForm = () => {
     setFormError("");
     setIsLoading(true);
     try {
-      await login({ email, password });
-      toast.success("Login successful", {
-        description: "Welcome back to your wallet dashboard!",
-      });
+      //   await login({ email, password });
+      await authService.forgotPassword({ email });
+      toast.success("successfull, Check your mail");
       // navigate("/");
-      window.location.href = "/";
+      // window.location.href = "/";
     } catch (error) {
       console.error("Login error:", error);
       setFormError((error as Error).message || "Invalid email or password");
@@ -64,33 +61,13 @@ const LoginForm = () => {
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Password</Label>
-              <a
-                href="/forgot-password"
-                className="text-xs text-blue-600 hover:underline"
-              >
-                Forgot password?
-              </a>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
           <Button
             type="submit"
             className="w-full"
             disabled={isLoading}
             variant={"outline"}
           >
-            {isLoading ? "Signing in..." : "Sign in"}
+            {isLoading ? "Sending..." : "Send Reset Code"}
           </Button>
         </form>
       </CardContent>
@@ -98,4 +75,4 @@ const LoginForm = () => {
   );
 };
 
-export default LoginForm;
+export default ForgotPasswordForm;

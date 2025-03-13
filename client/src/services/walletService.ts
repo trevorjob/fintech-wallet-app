@@ -6,6 +6,9 @@ export const walletService = {
   getBalance: async () => {
     return api.get("/wallet/balance");
   },
+  getUserInfo: async (walletId: string) => {
+    return api.get(`/wallet/balance/${walletId}`);
+  },
 
   // Initiate wallet funding
   initiateFunding: async (data: object) => {

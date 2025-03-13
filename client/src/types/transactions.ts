@@ -1,36 +1,60 @@
-// // src/types/transaction.ts
-// export interface PaymentDetails {
-//   status: boolean;
-//   amount: number;
-//   metadata?: {
-//     userId?: string;
-//     walletId?: string;
-//     referrer?: string;
-//     [key: string]: any; // For any other properties
-//   };
-// }
+type TransactionType = "TRANSFER" | "WITHDRAWAL" | "FUNDING";
+type TransactionStatus = "COMPLETED" | "PENDING" | "FAILED";
 
-// export interface TransactionMetadata {
-//   reference?: string;
-//   paymentGateway?: string;
-//   paymentDetails?: PaymentDetails;
-//   recipient?: string; // For transfer transactions
-//   accountNumber?: string; // For withdrawal transactions
-//   bankName?: string; // For withdrawal transactions
-//   description?: string;
-//   [key: string]: any; // For any other metadata properties
-// }
+interface TransferMetadata {
+  recipientWalletId?: string;
+  recipientEmail?: string;
+  recipientName?: string;
+  description: string;
+  transferType: "debit" | "credit";
+  senderName?: string;
+  senderEmail?: string;
+  senderWalletId?: string;
+}
 
-export interface Transaction {
+interface WithdrawalMetadata {
+  bankAccount: string;
+  bankCode: string;
+  fee: number;
+  actualAmount: number;
+  description: string;
+}
+
+interface PaymentDetails {
+  status: boolean;
+  amount: number;
+  metadata: {
+    userId: string;
+    walletId: string;
+    referrer?: string;
+  };
+}
+
+interface FundingMetadata {
+  reference: string;
+  paymentGateway: string;
+  paymentDetails: PaymentDetails;
+}
+
+type Metadata = TransferMetadata | WithdrawalMetadata | FundingMetadata;
+
+interface BaseTransaction {
   _id: string;
   referenceId: string;
   walletId: string;
   userId: string;
-  type: "FUNDING" | "WITHDRAWAL" | "TRANSFER" | string; // Add other transaction types you have
+  type: TransactionType;
   amount: number;
-  status: "PENDING" | "COMPLETED" | "FAILED" | string; // Add other statuses
-  metadata: object;
+  status: TransactionStatus;
+  metadata: Metadata;
   createdAt: string;
   updatedAt: string;
   __v: number;
 }
+
+export type {
+  BaseTransaction,
+  TransferMetadata,
+  WithdrawalMetadata,
+  FundingMetadata,
+};
