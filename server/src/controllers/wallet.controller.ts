@@ -99,13 +99,11 @@ export class WalletController {
   ): Promise<void> => {
     try {
       const userId = req.user!.userId;
-      const { amount, recipientEmail, description } = transferSchema.parse(
-        req.body
-      );
+      const { amount, walletId, description } = transferSchema.parse(req.body);
 
       const result = await this.walletService.transferFunds(
         userId,
-        recipientEmail,
+        walletId,
         amount,
         description
       );

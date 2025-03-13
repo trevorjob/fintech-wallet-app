@@ -10,4 +10,5 @@ export const config = {
   withdrawalMinAmount: 1000, // Minimum amount in Naira
   withdrawalFee: 50, // Flat fee in Naira
   paystackSecretKey: process.env.PAYSTACK_SECRET,
+  clientUrl: process.env.FRONTEND_URL,
 };

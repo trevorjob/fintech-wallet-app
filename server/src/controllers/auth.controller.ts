@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { AuthService } from "../services/auth.service";
 import { formatResponse } from "../utils/helpers";
-import { loginSchema, registerSchema } from "../utils/validation";
+import {
+  loginSchema,
+  registerSchema,
+  resetPasswordSchema,
+  forgotPasswordScheme,
+} from "../utils/validation";
 
 export class AuthController {
   private authService: AuthService;
@@ -78,6 +83,68 @@ export class AuthController {
       next(error);
     }
   };
+
+  /**
+   * Get wallet balance
+   */
+  getUserWallet = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { walletId } = req.params;
+      const userInfo = await this.authService.getUserInfo(walletId);
+
+      res
+        .status(200)
+        .json(
+          formatResponse(true, "User Info retrieved successfully", userInfo)
+        );
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  /**
+   * Get wallet balance
+   */
+  forgotPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { email } = forgotPasswordScheme.parse(req.body);
+      const userInfo = await this.authService.forgotPassword(email);
+
+      res.status(200).json(formatResponse(true, "successful", userInfo));
+    } catch (error) {
+      next(error);
+    }
+  };
+  /**
+   * Get wallet balance
+   */
+  resetPassword = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
+    try {
+      const { token, newPassword } = resetPasswordSchema.parse(req.body);
+      const userInfo = await this.authService.resetPassword(token, newPassword);
+
+      res
+        .status(200)
+        .json(
+          formatResponse(true, "successfully reset your password", userInfo)
+        );
+    } catch (error) {
+      next(error);
+    }
+  };
+
   /**
    * Login a user
    */

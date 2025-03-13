@@ -5,7 +5,8 @@ import { WalletRepository } from "../repositories/wallet.repository";
 import { AppError } from "../utils/errors";
 import { AuthPayload, UserDocument } from "../types";
 import { config } from "../config/config";
-
+import bcrypt from "bcrypt";
+import { sendEmail } from "../utils/email";
 export class AuthService {
   private userRepository: UserRepository;
   private walletRepository: WalletRepository;
@@ -13,6 +14,52 @@ export class AuthService {
   constructor() {
     this.userRepository = new UserRepository();
     this.walletRepository = new WalletRepository();
+  }
+  /**
+   * Request password reset
+   */
+  async forgotPassword(email: string): Promise<string> {
+    const user = await this.userRepository.findByEmail(email);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    // Generate reset token
+    const resetToken = jwt.sign({ userId: user._id }, config.jwtSecret, {
+      expiresIn: "1h",
+    });
+
+    // Send email with reset link
+    const resetLink = `${config.clientUrl}/reset-password?token=${resetToken}`;
+    await sendEmail(
+      user.email,
+      user.firstName,
+      "Password Reset Request",
+      `Click here to reset your password: ${resetLink}`,
+      ""
+    );
+
+    return "Password reset email sent";
+  }
+
+  /**
+   * Reset password
+   */
+  async resetPassword(token: string, newPassword: string): Promise<string> {
+    try {
+      const decoded: any = jwt.verify(token, config.jwtSecret);
+      const user = await this.userRepository.findById(decoded.userId);
+      if (!user) {
+        throw new AppError("Invalid or expired token", 400);
+      }
+
+      user.password = newPassword;
+      await user.save();
+
+      return "Password reset successful";
+    } catch (error) {
+      throw new AppError("Invalid or expired token", 400);
+    }
   }
 
   /**
@@ -77,6 +124,32 @@ export class AuthService {
     }
 
     return { user };
+  }
+
+  /**
+   * Get wallet balance
+   */
+  async getUserInfo(walletId: string): Promise<{
+    firstName: string;
+    lastName: string;
+    email: string;
+    walletId: string;
+  }> {
+    const wallet = await this.walletRepository.findByWalletId(walletId);
+    if (!wallet) {
+      throw new AppError("Wallet not found", 404);
+    }
+    const user = await this.userRepository.findById(wallet.userId);
+    if (!user) {
+      throw new AppError("User not found", 404);
+    }
+
+    return {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      walletId: walletId,
+    };
   }
 
   /**

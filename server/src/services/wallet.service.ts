@@ -14,7 +14,6 @@ import {
 import { config } from "../config/config";
 import { v4 as uuidv4 } from "uuid";
 import { sendEmail } from "../utils/email";
-import { send } from "process";
 export class WalletService {
   private userRepository: UserRepository;
   private walletRepository: WalletRepository;
@@ -213,7 +212,7 @@ export class WalletService {
    */
   async transferFunds(
     senderId: string,
-    recipientEmail: string,
+    walletId: string,
     amount: number,
     description?: string
   ): Promise<{ transaction: TransactionDocument; wallet: WalletDocument }> {
@@ -226,6 +225,10 @@ export class WalletService {
     if (!senderWallet) {
       throw new AppError("Sender wallet not found", 404);
     }
+    const sender = await this.userRepository.findById(senderWallet.userId);
+    if (!sender) {
+      throw new AppError("Sender  not found", 404);
+    }
 
     // Check if sender has enough balance
     if (senderWallet.balance < amount) {
@@ -233,7 +236,14 @@ export class WalletService {
     }
 
     // Find recipient by email
-    const recipient = await this.userRepository.findByEmail(recipientEmail);
+    const recipientWallet =
+      await this.walletRepository.findByWalletId(walletId);
+    if (!recipientWallet) {
+      throw new AppError("recipientWallet not found", 404);
+    }
+    const recipient = await this.userRepository.findById(
+      recipientWallet.userId
+    );
     if (!recipient) {
       throw new AppError("Recipient not found", 404);
     }
@@ -243,13 +253,13 @@ export class WalletService {
       throw new AppError("Cannot transfer to yourself", 400);
     }
 
-    // Find recipient wallet
-    const recipientWallet = await this.walletRepository.findByUserId(
-      recipient._id as string
-    );
-    if (!recipientWallet) {
-      throw new AppError("Recipient wallet not found", 404);
-    }
+    // // Find recipient wallet
+    // const recipientWallet = await this.walletRepository.findByUserId(
+    //   recipient._id as string
+    // );
+    // if (!recipientWallet) {
+    //   throw new AppError("Recipient wallet not found", 404);
+    // }
 
     // Create transaction for sender (debit)
     const senderTransaction = await this.transactionRepository.create({
@@ -262,7 +272,8 @@ export class WalletService {
       status: TransactionStatus.COMPLETED,
       metadata: {
         recipientWalletId: recipientWallet.walletId,
-        recipientEmail,
+        recipientEmail: recipient.email,
+        recipientName: `${recipient.firstName} ${recipient.lastName}`,
         description: description || "Wallet transfer",
         transferType: "debit",
       },
@@ -278,7 +289,8 @@ export class WalletService {
       status: TransactionStatus.COMPLETED,
       metadata: {
         senderWalletId: senderWallet.walletId,
-        senderEmail: recipient.email, // This should be the sender's email in the real implementation
+        senderEmail: sender.email, // This should be the sender's email in the real implementation
+        senderName: `${sender.firstName} ${sender.lastName}`, // This should be the sender's email in the real implementation
         description: description || "Wallet transfer",
         transferType: "credit",
       },
